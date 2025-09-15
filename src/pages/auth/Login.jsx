@@ -611,10 +611,16 @@ const Login = ({ onClose }) => {
                 {/* LEFT */}
                 <div className="hidden md:flex bg-[#251C4B] text-white rounded-2xl p-4 sm:p-5 flex-col justify-between">
                     <div className="flex justify-center mt-4">
-                        <img
+                        {/* <img
                             src="https://superadmin.progressalliance.org/upload/web_logo/be_come_seller.jpeg"
                             alt="Welcome Illustration"
                             className="w-full object-contain"
+                        /> */}
+                        <img
+                            src={`${import.meta.env.VITE_API_URL}/upload/web_logo/be_come_seller.jpeg`}
+                            alt="Welcome Illustration"
+                            className="w-full object-contain"
+
                         />
                     </div>
                 </div>
@@ -623,8 +629,14 @@ const Login = ({ onClose }) => {
                 <div className="flex flex-col justify-center px-4 sm:px-5 py-6">
                     {!showButtons && !newSupplier && (
                         <div className="flex justify-center mb-6">
-                            <img
+                            {/* <img
                                 src="https://superadmin.progressalliance.org/upload/web_logo/login_popup.png"
+                                alt="Logo"
+                                className="w-28 sm:w-32 md:w-40 lg:w-52 xl:w-60 border border-white rounded-2xl cursor-pointer"
+                                onClick={() => navigate("/")}
+                            /> */}
+                            <img
+                                src={`${import.meta.env.VITE_API_URL}/upload/web_logo/login_popup.png`}
                                 alt="Logo"
                                 className="w-28 sm:w-32 md:w-40 lg:w-52 xl:w-60 border border-white rounded-2xl cursor-pointer"
                                 onClick={() => navigate("/")}
@@ -708,7 +720,7 @@ const Login = ({ onClose }) => {
 
                                 {/* OTP */}
                                 {otpSent && !newSupplier && (
-                                    <div className="flex justify-center gap-12">
+                                    <div className="flex flex-col items-center">
                                         <OtpInput
                                             value={formData.otp}
                                             onChange={(otp) =>
@@ -724,18 +736,16 @@ const Login = ({ onClose }) => {
                                                     inputMode="numeric"
                                                     pattern="[0-9]"
                                                     maxLength="6"
-
                                                     style={{ width: "35px", height: "40px" }}
                                                     className="border border-gray-300 rounded-md text-center text-lg focus:outline-none focus:ring-2 focus:ring-[#251C4B] transition"
                                                 />
                                             )}
                                         />
                                         {error.otp && (
-                                            <p className="text-red-500 text-sm">{error.otp}</p>
+                                            <p className="text-red-500 text-sm leading-tight mt-2">{error.otp}</p>
                                         )}
                                     </div>
                                 )}
-
                                 {
                                     newSupplier && (
                                         <>

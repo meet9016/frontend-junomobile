@@ -212,7 +212,7 @@ const ProductDetails = () => {
                         : "/src/Image/No image.jpg")
                     }
                     alt={singleProductData?.product_name || "Product"}
-                    className="w-full h-auto object-contain bg-white rounded-2xl p-10"
+                    className="w-full h-[300px] md:h-[500px] object-contain bg-white rounded-2xl p-10"
                   />
                 )}
               </div>
@@ -256,6 +256,50 @@ const ProductDetails = () => {
                 </>
               )}
 
+
+
+
+              <div className="w-full flex mt-3 flex-col sm:flex-row items-center justify-between gap-4">
+                {loading ? (
+                  <div className="animate-pulse w-full h-24 bg-gray-300 rounded-lg"></div>
+                ) : (
+                  <>
+                    <div className="flex flex-col sm:flex-row w-full gap-4">
+                      {/* Wishlist Button */}
+                      <button
+                        className="flex-1 border border-gray-300 hover:border-[#251c4b] hover:text-white cursor-pointer
+               text-white py-3 rounded-lg flex items-center justify-center gap-2 
+               text-base sm:text-lg  bg-[#251c4b] shadow-sm 
+               hover:shadow-md transition-all "
+                      >
+                        <i className="ri-heart-line text-xl"></i>
+                        <span>Add to Wishlist</span>
+                      </button>
+
+                      {/* Inquiry Button */}
+                      <button
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg 
+               flex items-center justify-center gap-3 text-base sm:text-lg cursor-pointer 
+               shadow-md transition-all duration-300"
+                        onClick={() => {
+                          if (!auth_token) {
+                            localStorage.setItem("redirectAfterLogin", location.pathname);
+                            setShowLogin(true);
+                            return;
+                          }
+                          setInquiryPopup(true);
+                        }}
+                      >
+                        <i className="ri-whatsapp-fill text-2xl"></i> Inquiry
+                      </button>
+                    </div>
+
+                  </>
+                )}
+              </div>
+
+
+
               <div className=" rounded-xl border border-gray-200 mt-3 p-0">
                 {loading ? (
 
@@ -263,7 +307,7 @@ const ProductDetails = () => {
                 ) : (
                   <div className="bg-white rounded-xl p-4">
                     <h3 className="text-lg font-bold text-gray-900 border-b border-gray-300 pb-2 mb-4">
-                      Product Details
+                      Mobile Details
                     </h3>
 
                     <ul className="space-y-2 text-gray-700 text-sm">
@@ -283,68 +327,6 @@ const ProductDetails = () => {
                   </div>
                 )}
               </div>
-
-
-              <div className="w-full flex mt-3 flex-col sm:flex-row items-center justify-between gap-4">
-                {loading ? (
-                  <div className="animate-pulse w-full h-24 bg-gray-300 rounded-lg"></div>
-                ) : (
-                  <>
-                    <div className="flex items-center border border-gray-300 bg-white rounded-lg py-2 px-4 w-full sm:w-auto justify-between">
-                      <button
-                        onClick={() => setCount((prev) => Math.max(prev - 1, 0))}
-                        className="h-10 w-10 flex items-center justify-center text-2xl font-bold cursor-pointer"
-                      >
-                        -
-                      </button>
-                      <span className="px-6 text-xl font-semibold">{count}</span>
-                      <button
-                        onClick={() => setCount((prev) => prev + 1)}
-                        className="h-10 w-10 flex items-center justify-center text-2xl font-bold cursor-pointer"
-                      >
-                        +
-                      </button>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row w-full gap-4">
-                      <button
-                        className="flex-1 bg-[#251C4B] hover:bg-[#1a1335] text-white py-3 rounded-lg flex items-center justify-center gap-3 text-lg cursor-pointer"
-                        onClick={() => addToCart()}
-                      >
-                        <i className="ri-shopping-cart-fill text-2xl"></i> Add to Cart
-                      </button>
-
-                      <button
-                        className="flex-1 bg-[green] hover:bg-[green] text-white py-3 rounded-lg flex items-center justify-center gap-3 text-lg cursor-pointer"
-                        onClick={() => {
-                          if (!auth_token) {
-                            localStorage.setItem("redirectAfterLogin", location.pathname);
-                            setShowLogin(true);
-                            return;
-                          }
-                          setInquiryPopup(true);
-                        }}
-                      >
-                        <i className="ri-whatsapp-fill text-2xl"></i> Inquiry
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-
-
-
-              {/* Wishlist, Share */}
-              {/* <div className="flex gap-6 text-sm sm:text-base text-black flex-wrap">
-                <div className="flex items-center gap-1 cursor-pointer">
-                                <i className="border border-gray-300 rounded-md w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center ri-heart-line"></i>
-                                Add to wishlist
-                            </div>
-                <div className="flex items-center gap-1 cursor-pointer">
-                <i className="border border-gray-300 rounded-md w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center ri-share-2-line"></i>
-                Share this Product
-              </div>
-              </div> */}
 
 
 
@@ -429,82 +411,7 @@ const ProductDetails = () => {
             ) : (
               <div className="bg-white shadow-md rounded-2xl border border-gray-200 overflow-hidden">
                 {/* Top Header Tabs */}
-                <div className="flex gap-6 text-sm sm:text-base font-medium border-b border-gray-200 bg-gray-50 px-6 py-4 rounded-t-2xl">
-                  <button
-                    onClick={() => setActiveTab("description")}
-                    className={`transition pb-2 ${activeTab === "description"
-                      ? "border-b-2 border-black cursor-pointer text-black"
-                      : "text-gray-500 cursor-pointer hover:text-black"
-                      }`}
-                  >
-                    Description
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("additional")}
-                    className={`transition pb-2 ${activeTab === "additional"
-                      ? "border-b-2 cursor-pointer border-black text-black"
-                      : "text-gray-500 cursor-pointer hover:text-black"
-                      }`}
-                  >
-                    Additional Information
-                  </button>
-                </div>
-
-                {/* Bottom Content */}
-                <div className="px-6 py-6 bg-white h-[220px]">
-                  {activeTab === "description" ? (
-                    <p>{singleProductData?.long_description?.replace(/<[^>]+>/g, "")}</p>
-                  ) : singleProductData?.additional ? (
-                    <p>{singleProductData.additional}</p>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center w-full">
-                      <div className="w-full max-w-7xl bg-white rounded-xl p-1">
-                        <div className="overflow-x-auto">
-                          <div className="max-h-42 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#251C4B_#f1f1f1]">
-                            <table className="w-full text-sm md:text-base border-collapse border border-gray-300 min-w-full">
-                              <thead className="bg-[#251c4b] sticky top-0 z-10">
-                                <tr>
-                                  <th className="px-3 py-2 md:px-4 md:py-2 text-left font-semibold text-white w-1/2">
-                                    Specification
-                                  </th>
-                                  <th className="px-3 py-2 md:px-4 md:py-2 text-left font-semibold text-white w-1/2">
-                                    Detail
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody className="divide-y divide-gray-200">
-                                {singleProductData?.product_details?.length > 0 ? (
-                                  singleProductData.product_details.map((item, index) => (
-                                    <tr
-                                      key={item.specification_id || index}
-                                      className="odd:bg-white even:bg-gray-50 hover:bg-gray-100 transition"
-                                    >
-                                      <td className="px-3 py-2 md:px-4 md:py-2 text-gray-600">
-                                        {item.specification}
-                                      </td>
-                                      <td className="px-3 py-2 md:px-4 md:py-2 font-medium text-gray-900">
-                                        {item.detail}
-                                      </td>
-                                    </tr>
-                                  ))
-                                ) : (
-                                  <tr>
-                                    <td
-                                      colSpan="2"
-                                      className="px-4 py-3 text-center text-gray-500 italic"
-                                    >
-                                      No specifications available
-                                    </td>
-                                  </tr>
-                                )}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <img src="/src/Image/Breackfast & Dairy.jpg" className="w-[1500px] h-[400px]"></img>
               </div>
             )}
           </div>

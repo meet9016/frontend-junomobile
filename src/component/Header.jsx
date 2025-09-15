@@ -28,8 +28,13 @@ const Header = () => {
     const [userDropDown, setUserDropDown] = useState(false);
     const [supplierButton, setSupplierButton] = useState(null);
     const authToken = localStorage.getItem("auth_token");
-
-    console.log(cardList, 'cardList');
+    const cityDropdown = [
+        { name: 'ahemdabad' },
+        { name: 'baroda' },
+        { name: 'mumbai' },
+        { name: 'delhi' }
+    ]
+    const [selectedCity, setSelectedCity] = useState("Select City");
 
 
     const fetchSuggestions = async (searchText) => {
@@ -252,34 +257,38 @@ const Header = () => {
 
                     {/* Left: Logo + Text */}
                     <div className="flex items-center gap-3 flex-shrink-0">
+
                         <img
-                            src="https://superadmin.progressalliance.org/upload/web_logo/20250816095817_8272.png"
-                            alt="Logo"
-                            className="w-28 sm:w-32 md:w-40 cursor-pointer"
+                            src={`${import.meta.env.VITE_API_URL}/upload/web_logo/20250816095817_8272.png`}
+                            alt="Website Logo"
+                            className="w-28 sm:w-32 md:w-40 border rounded-md cursor-pointer"
                             onClick={() => navigate('/')}
                         />
-                        {/* Divider + Text (hide on mobile) */}
+
+
+                        {/* CITY DropDown */}
                         <div className="hidden sm:flex items-center gap-2">
                             <div className="w-px h-12 md:h-20 bg-gray-200"></div>
-                            <div className="flex flex-col leading-tight px-2">
-                                <span className="font-bold text-[13px] sm:text-[15px] md:text-[17px]">
-                                    Welcome to the world
-                                </span>
-                                <span className="font-bold text-[13px] sm:text-[15px] md:text-[17px]">
-                                    of Possibilities
-                                </span>
-                            </div>
+
+                            <select
+                                className="w-72 sm:w-80 md:w-96 lg:w-[420px] h-12 border border-gray-300 rounded-lg px-3 text-base"
+                            >
+                                <option>Select city</option>
+                                {cityDropdown.map((val, index) => (
+                                    <option key={index}>{val.name}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 
-                    <div ref={wrapperRef} className="relative w-full max-w-2xl mx-4">
+                    <div ref={wrapperRef} className="relative w-full max-w-3xl mx-4">
                         {/* Search Box */}
-                        <div className="hidden sm:flex items-center bg-gray-100 rounded-lg px-3 py-1 md:px-4 md:py-2 flex-1">
+                        <div className="hidden sm:flex items-center bg-white border border-gray-300 rounded-lg px-4 h-12 w-full">
                             <i className="ri-search-line text-black text-lg mr-2"></i>
                             <input
                                 type="text"
-                                placeholder='Search "grocery"'
-                                className="bg-transparent outline-none border-none focus:ring-0 h-[28px] flex-1 text-[14px] placeholder-gray-500"
+                                placeholder='Search "Mobile & Shop"'
+                                className="bg-transparent outline-none border-none focus:ring-0 flex-1 text-[15px] placeholder-gray-500"
                                 value={query}
                                 onChange={(e) => {
                                     setQuery(e.target.value);
@@ -287,13 +296,16 @@ const Header = () => {
                                 }}
                             />
                             {query && (
-                                <button onClick={() => setQuery("")} className="text-gray-400 text-xl">
+                                <button
+                                    onClick={() => setQuery("")}
+                                    className="text-gray-400 text-xl"
+                                >
                                     &times;
                                 </button>
                             )}
                         </div>
 
-                        {/*  Desktop Dropdown */}
+                        {/* Desktop Dropdown */}
                         {showDropdown && results.length > 0 && (
                             <div className="hidden md:block absolute left-0 right-0 bg-white rounded-lg shadow-lg mt-2 max-h-80 overflow-y-auto z-10">
                                 <ul>
@@ -327,19 +339,18 @@ const Header = () => {
                                 </div>
                             </div>
                         )}
-
                     </div>
 
 
-                    {/* Right Buttons (Desktop) */}
 
+                    {/* Right Buttons (Desktop) */}
                     <div className="hidden md:flex items-center">
                         {/* Cart Button (Desktop) */}
                         <button
                             onClick={handleAddcart}
                             className="flex items-center gap-2  px-3 py-2 md:px-4 rounded-lg text-black  cursor-pointer"
                         >
-                            <i className="ri-shopping-cart-2-line text-[#251c4b] text-2xl"></i>
+                            <i className="ri-heart-line text-[#251c4b] text-2xl"></i>
                         </button>
 
                         {/* Login / Logout Button */}
@@ -418,6 +429,8 @@ const Header = () => {
                             </ul>
                         </div>
                     )} */}
+
+
                     {userDropDown && alreadyLogin && (
                         <div className="absolute right-3 mt-75 w-56 bg-white border border-gray-200 rounded-xl shadow-xl z-50 hidden md:block">
                             <ul className="py-2">
@@ -635,6 +648,9 @@ const Header = () => {
 
                     {/* Mobile Right Side Icons */}
                     <div className="md:hidden flex items-center gap-3">
+
+                     
+
                         {/* Search Button */}
                         <button
                             onClick={() => setShowMobileSearch(!showMobileSearch)}
@@ -644,11 +660,19 @@ const Header = () => {
                         </button>
 
                         {/* Cart Button */}
-                        <button
+                        {/* <button
                             onClick={handleAddcart}
                             className="p-2 rounded-md"
                         >
                             <i className="ri-shopping-cart-2-line text-xl text-[#251c4b]"></i>
+                        </button> */}
+
+                        {/* HEART BUTTON */}
+                        <button
+                            onClick={handleAddcart}
+                            className="p-2 rounded-md"
+                        >
+                            <i className="ri-heart-line text-xl text-[#251c4b]"></i>
                         </button>
 
 
@@ -677,7 +701,7 @@ const Header = () => {
                 </div>
 
                 {/* Mobile Menu Drawer */}
-                <div
+                {/* <div
                     className={`fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 flex flex-col transform transition-transform duration-300 ease-in-out ${showMenu ? "translate-x-0" : "translate-x-full"
                         }`}
                 >
@@ -709,7 +733,7 @@ const Header = () => {
                             Login
                         </button>
                     </div>
-                </div>
+                </div> */}
 
                 {showLogin && (
                     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]">
@@ -760,7 +784,7 @@ const Header = () => {
                             {/* Input */}
                             <input
                                 type="text"
-                                placeholder='Search "grocery"'
+                                placeholder='Search "Mobile & Shop"'
                                 className="bg-transparent outline-none border-none focus:ring-0 flex-1 text-sm placeholder-gray-500"
                                 value={query}
                                 onChange={(e) => {
