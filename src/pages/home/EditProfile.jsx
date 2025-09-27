@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router";
 import api from "../utils.jsx/axiosInstance";
 import endPointApi from "../utils.jsx/endPointApi";
 import { toast } from "react-toastify";
+import CommanInput from "../../comman/CommanInput";
+import CommanButton from "../../comman/CommanButton";
 
 const EditProfile = () => {
     const location = useLocation();
@@ -44,16 +46,13 @@ const EditProfile = () => {
     const handleSave = async () => {
         try {
             setLoading(true);
-
             const datas = new FormData();
             datas.append("full_name", formData.fullname);
             datas.append("address", formData.address);
             datas.append("city", formData.city);
             datas.append("pincode", formData.pincode);
             datas.append("user_image", formData.image);
-
             const res = await api.post(endPointApi.editProfile, datas);
-
             if (res.data && res.data.data) {
                 toast.success(res.data.message)
                 navigate("/my-profile");
@@ -76,10 +75,7 @@ const EditProfile = () => {
                     {/* Header */}
                     <div className="bg-[#251c4b] text-white px-6 py-4 flex justify-between items-center">
                         <h2 className="text-lg sm:text-2xl font-semibold">Edit Profile</h2>
-                        <button
-                            className="p-2 cursor-pointer rounded-full hover:bg-white/20 transition"
-                        >
-                        </button>
+
                     </div>
 
 
@@ -137,14 +133,13 @@ const EditProfile = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Phone Number
                                 </label>
-                                <input
+                                <CommanInput
                                     type="text"
                                     name="mobile"
                                     value={formData.mobile}
                                     onChange={handleChange}
-                                    placeholder="Enter phone number"
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#251c4b] shadow-sm"
                                     disabled
+                                    placeholder="Enter phone number"
                                 />
                             </div>
 
@@ -153,13 +148,12 @@ const EditProfile = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Full Name
                                 </label>
-                                <input
+                                <CommanInput
                                     type="text"
-                                    name="fullname"
+                                    name='fullname'
                                     value={formData.fullname}
                                     onChange={handleChange}
-                                    placeholder="Enter full name"
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#251c4b] shadow-sm"
+                                    placeholder="Enter full nameeeeeeee"
                                 />
                             </div>
 
@@ -182,13 +176,12 @@ const EditProfile = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     City
                                 </label>
-                                <input
+                                <CommanInput
                                     type="text"
                                     name="city"
                                     value={formData.city}
                                     onChange={handleChange}
-                                    placeholder="Enter city"
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#251c4b] shadow-sm"
+                                    placeholder="Enter Cityyyyyyyyyyy"
                                 />
                             </div>
 
@@ -197,26 +190,25 @@ const EditProfile = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Pincode
                                 </label>
-                                <input
+                                <CommanInput
                                     type="text"
                                     name="pincode"
                                     value={formData.pincode}
                                     onChange={handleChange}
-                                    placeholder="Enter pincode"
-                                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#251c4b] shadow-sm"
+                                    placeholder="Enter pincodeeeeeeeeeeeeeee"
+                                    maxLength={6}
                                 />
                             </div>
                         </div>
 
                         {/* Save Button */}
-                        <div className="mt-10 flex justify-end">
-                            <button
+                        <div className="mt-10">
+                            <CommanButton
                                 type="button"
+                                label="Save Change"
                                 onClick={handleSave}
-                                className="bg-[#251c4b] cursor-pointer text-white px-8 py-3 rounded-lg font-medium hover:bg-[#1d163c] transition shadow-lg"
-                            >
-                                Save Changes
-                            </button>
+                                className="px-8 py-3"
+                            />
                         </div>
                     </div>
                 </div>

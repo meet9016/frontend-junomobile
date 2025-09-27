@@ -63,19 +63,6 @@ const Category = () => {
       {/* <PageMeta title="Category" description="This is Category Page" /> */}
       <div className="w-full max-w-[1300px] mx-auto px-4 py-2 flex flex-col items-center">
         <div className="w-full mt-14 sm:mt-19">
-
-          {/* Breadcrumb */}
-          {/* <div className="text-sm text-gray-500 mb-4 flex items-center gap-1">
-          <span
-            className="cursor-pointer hover:underline"
-            onClick={() => navigate("/")}
-          >
-            Home
-          </span>
-          <i className="ri-arrow-right-s-line" />
-          <span className="font-medium">{categories_name || "Category"}</span>
-        </div> */}
-
           {/* Title */}
           <div className="text-center mt-3 sm:mt-5 mb-3 sm:mb-8">
             <h2 className="inline-block relative text-xl sm:text-3xl font-bold text-gray-900 tracking-tight">

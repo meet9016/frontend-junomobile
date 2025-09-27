@@ -4,8 +4,6 @@ import endPointApi from "../utils.jsx/endPointApi";
 import { useNavigate } from "react-router";
 
 const MyProfile = () => {
-
-
     const [profileData, setProfileData] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -35,12 +33,12 @@ const MyProfile = () => {
                     {/* Header */}
                     <div className="bg-[#251c4b] text-white px-6 py-4 flex justify-between items-center">
                         <h2 className="text-lg sm:text-2xl font-semibold">My Profile</h2>
-                        <button
+                        <span
                             className="p-2 cursor-pointer rounded-full hover:bg-white/20 transition"
                             onClick={() => navigate('/edit-profile', { state: profileData })}
                         >
                             <i className="ri-edit-box-line text-2xl"></i>
-                        </button>
+                        </span>
                     </div>
 
                     {/* Content */}
@@ -58,7 +56,6 @@ const MyProfile = () => {
                                     className="w-50 h-50 rounded-full border-2  border-[#251c4b] object-cover"
                                 />
                             </div>
-
 
                             {/* User Info */}
                             <div className="space-y-3 text-gray-700">
@@ -82,7 +79,6 @@ const MyProfile = () => {
                                         <span className="font-bold">Address:</span> {profileData.address}
                                     </p>
                                 </div> */}
-
 
                                 <div className="flex items-center gap-3">
                                     <i className="ri-building-line text-[#251c4b] text-lg"></i>

@@ -7,18 +7,18 @@ import Login from "../pages/auth/Login";
 import debounce from 'lodash.debounce';
 import SupplierForm from "../pages/auth/Supplier";
 import Aos from "aos";
+import CommanInput from "../comman/CommanInput";
+import CommanButton from "../comman/CommanButton";
 
 const Header = () => {
     const navigate = useNavigate()
     const alreadyLogin = localStorage.getItem('auth_token')
     const [showCart, setShowCart] = useState(false);
-    const [showMenu, setShowMenu] = useState(false);
     const [cardList, setCardList] = useState([]);
     const [totalAmount, setTotalAmount] = useState();
     const [loading, setLoading] = useState(false);
     const [showLogin, setShowLogin] = useState(false)
     const [counts, setCounts] = useState({});
-
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -34,8 +34,6 @@ const Header = () => {
         { name: 'mumbai' },
         { name: 'delhi' }
     ]
-    const [selectedCity, setSelectedCity] = useState("Select City");
-
 
     const fetchSuggestions = async (searchText) => {
         if (!searchText) {
@@ -66,21 +64,17 @@ const Header = () => {
 
     const handleIncrement = async (cart_id, p_id) => {
         const newQuantity = (counts[cart_id] || 1) + 1;
-
         // UI update
         setCounts((prev) => ({
             ...prev,
             [cart_id]: newQuantity,
         }));
-
         try {
             const formdata = new FormData();
             formdata.append("product_id", p_id);
             formdata.append("quantity", newQuantity);
             formdata.append("type", 2);
-
             const res = await api.post(endPointApi.postAddToCart, formdata);
-
             if (res.data.status === 200) {
                 // toast.success(res?.data?.message);
             }
@@ -89,23 +83,18 @@ const Header = () => {
         }
     };
 
-
     const handleDecrement = async (cart_id, p_id) => {
         const newQuantity = counts[cart_id] > 1 ? counts[cart_id] - 1 : 1;
-
         setCounts((prev) => ({
             ...prev,
             [cart_id]: newQuantity,
         }));
-
         try {
             const formdata = new FormData();
             formdata.append("product_id", p_id);
             formdata.append("quantity", newQuantity);
             formdata.append("type", 2);
-
             const res = await api.post(endPointApi.postAddToCart, formdata);
-
             if (res.data.status === 200) {
                 // toast.success(res?.data?.message);
             }
@@ -113,17 +102,6 @@ const Header = () => {
             console.log("Error Fetch data", err);
         }
     };
-
-
-
-
-
-
-
-
-
-
-
 
     const handleAddcart = async () => {
         if (!alreadyLogin) {
@@ -133,7 +111,6 @@ const Header = () => {
         setShowCart(true)
         try {
             const res = await api.post(`${endPointApi.postCartList}`, {});
-
             if (res?.data && res?.data?.data) {
                 setCardList(res?.data?.data?.cart_list || [])
                 setTotalAmount(res?.data?.data?.cart_total)
@@ -144,48 +121,25 @@ const Header = () => {
         }
     }
 
-    // const addToCart = () => {
-    //     const p_id = cardList.map((i) => i.product_id.join(', '))
-    //     console.log(p_id, 'qq')
+    // const addToCart = async (productId, quantity) => {
     //     try {
-    //         const formdata = new FormData();
-    //         formdata.append("product_id", p_id);
-    //         formdata.append("quantity", count);
-    //         formdata.append("type", 2);
+    //         const formData = new FormData();
+    //         formData.append("product_id", productId);
+    //         formData.append("quantity", quantity);
+    //         formData.append("type", 2);
 
-    //         api.post(endPointApi.postAddToCart, formdata).then((res) => {
-    //             if (res.data.status == 200) {
-    //                 toast.success(res?.data?.message)
-    //             }
-    //         })
-    //         if (res.sta)
-    //             console.log("res", res);
+    //         setLoading(true);
+    //         const res = await api.post(`${endPointApi.postAddToCart}`, formData);
+
+    //         if (res.data && res.data.data) {
+    //             console.log("Cart Updated:", res.data.data);
+    //         }
     //     } catch (err) {
-    //         console.log("Error Fetch data", err)
+    //         console.log(err, "ERROR");
     //     } finally {
-    //         // setLoading(false)
+    //         setLoading(false);
     //     }
-    // }
-
-    const addToCart = async (productId, quantity) => {
-        try {
-            const formData = new FormData();
-            formData.append("product_id", productId);
-            formData.append("quantity", quantity);
-            formData.append("type", 2);
-
-            setLoading(true);
-            const res = await api.post(`${endPointApi.postAddToCart}`, formData);
-
-            if (res.data && res.data.data) {
-                console.log("Cart Updated:", res.data.data);
-            }
-        } catch (err) {
-            console.log(err, "ERROR");
-        } finally {
-            setLoading(false);
-        }
-    };
+    // };
 
     const orderOnWhatsapp = () => {
         if (!alreadyLogin) {
@@ -207,9 +161,7 @@ const Header = () => {
             // setLoading(false)
         }
     }
-
     const debouncedFetch = debounce(fetchSuggestions, 300);
-
     useEffect(() => {
         debouncedFetch(query);
         return () => debouncedFetch.cancel();
@@ -254,22 +206,17 @@ const Header = () => {
         <>
             <header className="w-full fixed top-0 left-0 z-50 bg-white shadow-md px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-[60px] md:h-[80px]">
-
                     {/* Left: Logo + Text */}
                     <div className="flex items-center gap-3 flex-shrink-0">
-
                         <img
                             src={`${import.meta.env.VITE_API_URL}/upload/web_logo/20250816095817_8272.png`}
                             alt="Website Logo"
                             className="w-28 sm:w-32 md:w-40 border rounded-md cursor-pointer"
                             onClick={() => navigate('/')}
                         />
-
-
                         {/* CITY DropDown */}
                         <div className="hidden sm:flex items-center gap-2">
                             <div className="w-px h-12 md:h-20 bg-gray-200"></div>
-
                             <select
                                 className="w-72 sm:w-80 md:w-96 lg:w-[420px] h-12 border border-gray-300 rounded-lg px-3 text-base"
                             >
@@ -280,12 +227,21 @@ const Header = () => {
                             </select>
                         </div>
                     </div>
-
                     <div ref={wrapperRef} className="relative w-full max-w-3xl mx-4">
                         {/* Search Box */}
                         <div className="hidden sm:flex items-center bg-white border border-gray-300 rounded-lg px-4 h-12 w-full">
                             <i className="ri-search-line text-black text-lg mr-2"></i>
-                            <input
+                            {/* <input
+                                type="text"
+                                placeholder='Search "Mobile & Shop"'
+                                className="bg-transparent outline-none border-none focus:ring-0 flex-1 text-[15px] placeholder-gray-500"
+                                value={query}
+                                onChange={(e) => {
+                                    setQuery(e.target.value);
+                                    setShowDropdown(true);
+                                }}
+                            /> */}
+                            <CommanInput
                                 type="text"
                                 placeholder='Search "Mobile & Shop"'
                                 className="bg-transparent outline-none border-none focus:ring-0 flex-1 text-[15px] placeholder-gray-500"
@@ -296,13 +252,20 @@ const Header = () => {
                                 }}
                             />
                             {query && (
-                                <button
+                                <div
                                     onClick={() => setQuery("")}
-                                    className="text-gray-400 text-xl"
+                                    className="ml-auto ml-2 text-gray-400 text-xl"
                                 >
                                     &times;
-                                </button>
+                                </div>
                             )}
+                            {/* {query && (
+                                <CommanButton
+                                    label="&times;"
+                                    onClick={() => setQuery("")}
+                                    className="ml-auto ml-2 text-gray-400 text-xl bg-transparent border-none shadow-none hover:bg-transparent"
+                                />
+                            )} */}
                         </div>
 
                         {/* Desktop Dropdown */}
@@ -329,13 +292,13 @@ const Header = () => {
                                     ))}
                                 </ul>
                                 <div className="w-full text-center px-4 py-4">
-                                    <button
+                                    <div
                                         onClick={handleShowAllResults}
                                         className="inline-flex cursor-pointer items-center gap-3 text-base font-semibold"
                                         style={{ color: "#251C4B" }}
                                     >
                                         View more →
-                                    </button>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -345,16 +308,18 @@ const Header = () => {
 
                     {/* Right Buttons (Desktop) */}
                     <div className="hidden md:flex items-center">
-                        {/* Cart Button (Desktop) */}
-                        <button
+                        {/* whishlist Button (Desktop) */}
+                        <CommanButton
+                            label={<i className="ri-heart-line text-[#251c4b] text-2xl"></i>}
                             onClick={handleAddcart}
-                            className="flex items-center gap-2  px-3 py-2 md:px-4 rounded-lg text-black  cursor-pointer"
-                        >
-                            <i className="ri-heart-line text-[#251c4b] text-2xl"></i>
-                        </button>
+                            bgColor="bg-none"
+                            shaDow="shadow-none"
+                            borDer="border-none"
+                            className="px-3 py-2 md:px-4 "
+                        />
 
                         {/* Login / Logout Button */}
-                        <button
+                        <CommanButton
                             onClick={() => {
                                 if (alreadyLogin) {
                                     setUserDropDown((prev) => !prev);
@@ -363,74 +328,23 @@ const Header = () => {
                                     setShowLogin(true);
                                 }
                             }}
-                            className="flex items-center gap-2 px-3 py-2 md:px-4 rounded-lg text-black  cursor-pointer"
-                        >
-                            {alreadyLogin ? (
-                                <i
-                                    onClick={onProfileClick}
-                                    className="ri-user-3-line text-2xl text-[#251c4b]"></i>
-                            ) : (
-                                <i className="ri-login-box-line text-2xl text-[#251c4b]"></i>
-                            )}
-                        </button>
-
-
-
+                            className="px-3 py-2 md:px-4 "
+                            bgColor="bg-white"
+                            shaDow="shadow-none"
+                            borDer="border-none"
+                            label={
+                                alreadyLogin ? (
+                                    <i
+                                        onClick={onProfileClick}
+                                        className="ri-user-3-line text-2xl  text-[#251c4b]"
+                                    ></i>
+                                ) : (
+                                    <i className="ri-login-box-line text-2xl text-[#251c4b]"></i>
+                                )
+                            }
+                        />
                     </div>
-
-
-
                     {/*User Dropdown */}
-                    {/* {userDropDown && alreadyLogin && (
-                        <div className="absolute right-3 mt-80 w-45 bg-white border border-gray-200 rounded-lg shadow-lg z-50 hidden md:block">
-                            <ul className="py-2">
-                                <li
-                                    onClick={() => navigate('/my-profile')}
-                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                >
-                                    <div className="flex gap-4">
-                                        <i className="ri-user-fill text-[#251c4b] text-[20px] font-bold"></i>
-                                        My Profile
-                                    </div>
-                                </li>
-                                <li
-                                    onClick={() => navigate('/inquiry')}
-                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                >
-                                    <div className="flex gap-4">
-                                        <i className="ri-whatsapp-line text-[#251c4b] text-[20px] font-bold"></i>
-                                        My Inquiry
-                                    </div>
-                                </li>
-                                <li
-                                    onClick={() => {
-                                        localStorage.removeItem("auth_token");
-                                        setUserDropDown(false);
-                                        toast.success("Logged out successfully!");
-                                        navigate("/");
-                                    }}
-                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                >
-                                    <div className="flex gap-4">
-                                        <i className="ri-logout-box-line text-[#251c4b] text-[20px] font-bold"></i>
-                                        Sign Out
-                                    </div>
-                                </li>
-                                {supplierButton && (
-                                    <li className="px-4 py-2">
-                                        <button
-                                            onClick={Suuplier}
-                                            className="w-full cursor-pointer text-left bg-[#251c4b] text-white px-4 py-2 rounded-md hover:bg-[#1c1639]"
-                                        >
-                                            {supplierButton}
-                                        </button>
-                                    </li>
-                                )}
-                            </ul>
-                        </div>
-                    )} */}
-
-
                     {userDropDown && alreadyLogin && (
                         <div className="absolute right-3 mt-75 w-56 bg-white border border-gray-200 rounded-xl shadow-xl z-50 hidden md:block">
                             <ul className="py-2">
@@ -476,23 +390,19 @@ const Header = () => {
                                 {/* Supplier Button */}
                                 {supplierButton && (
                                     <li className="px-4 py-3">
-                                        <button
+                                        <CommanButton
                                             onClick={Suuplier}
-                                            className="w-full bg-[#251c4b] text-white px-4 py-2 rounded-lg hover:bg-[#1c1639] transition text-center font-medium"
-                                        >
-                                            {supplierButton}
-                                        </button>
+                                            label={supplierButton}
+                                            className="w-full"
+                                        />
+
                                     </li>
                                 )}
                             </ul>
                         </div>
                     )}
 
-
-
-
                     {/* Mobile User Dropdown */}
-
                     {userDropDown && alreadyLogin && (
                         <div className="fixed right-2 top-[70px] w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999] md:hidden">
                             <ul className="py-2">
@@ -536,12 +446,12 @@ const Header = () => {
                                 </li>
                                 {supplierButton && (
                                     <li className="px-4 py-2">
-                                        <button
+                                        <CommanButton
                                             onClick={Suuplier}
-                                            className="w-full cursor-pointer text-left bg-[#251c4b] text-white px-4 py-2 rounded-md hover:bg-[#1c1639]"
-                                        >
-                                            {supplierButton}
-                                        </button>
+                                            label={supplierButton}
+                                            className="w-full"
+                                        />
+
                                     </li>
                                 )}
                             </ul>
@@ -559,9 +469,9 @@ const Header = () => {
                         {/* Header */}
                         <div className="flex items-center justify-between px-8 py-5 border-b border-gray-200">
                             <h2 className="text-2xl font-bold">My Cart</h2>
-                            <button onClick={() => setShowCart(false)}>
+                            <span onClick={() => setShowCart(false)}>
                                 <i className="ri-close-large-fill cursor-pointer text-xl"></i>
-                            </button>
+                            </span>
                         </div>
 
                         {/* Cart Items (Scrollable) */}
@@ -619,11 +529,6 @@ const Header = () => {
                             </div>
                         </div>
 
-
-
-
-
-
                         {/* Footer */}
                         {cardList.length !== 0 && (
                             <div className="bg-[#F5F7FD] px-4 py-3">
@@ -632,52 +537,37 @@ const Header = () => {
                                     onClick={orderOnWhatsapp}
                                 >
                                     <div className="flex items-center gap-2">
-                                        <button className="bg-[#008000] text-white px-2 py-1 rounded-lg flex items-center justify-center">
+                                        <span className="bg-[#008000] text-white px-2 py-1 rounded-lg flex items-center justify-center">
                                             <i className="ri-whatsapp-fill text-2xl"></i>
-                                        </button>
+                                        </span>
                                         <p className="text-[18px] font-bold">Inquiry On Whatsapp</p>
                                     </div>
                                     <i className="ri-arrow-right-s-line text-xl"></i>
                                 </div>
                             </div>
                         )}
-
                     </div>
-
-
 
                     {/* Mobile Right Side Icons */}
                     <div className="md:hidden flex items-center gap-3">
-
-                     
-
                         {/* Search Button */}
-                        <button
+                        <span
                             onClick={() => setShowMobileSearch(!showMobileSearch)}
                             className="p-2 rounded-md"
                         >
                             <i className="ri-search-line text-xl text-[#251c4b]"></i>
-                        </button>
-
-                        {/* Cart Button */}
-                        {/* <button
-                            onClick={handleAddcart}
-                            className="p-2 rounded-md"
-                        >
-                            <i className="ri-shopping-cart-2-line text-xl text-[#251c4b]"></i>
-                        </button> */}
+                        </span>
 
                         {/* HEART BUTTON */}
-                        <button
+                        <span
                             onClick={handleAddcart}
                             className="p-2 rounded-md"
                         >
                             <i className="ri-heart-line text-xl text-[#251c4b]"></i>
-                        </button>
-
+                        </span>
 
                         {/* Login / User Button (Mobile) */}
-                        <button
+                        <div
                             onClick={() => {
                                 if (alreadyLogin) {
                                     setUserDropDown((prev) => !prev);
@@ -693,47 +583,9 @@ const Header = () => {
                                 {`${alreadyLogin ? "ri-user-3-line text-[#251c4b]" : "ri-login-circle-line"} text-xl text-[#251c4b]`}
                             >
                             </i>
-                        </button>
-
-
+                        </div>
                     </div>
-
                 </div>
-
-                {/* Mobile Menu Drawer */}
-                {/* <div
-                    className={`fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 flex flex-col transform transition-transform duration-300 ease-in-out ${showMenu ? "translate-x-0" : "translate-x-full"
-                        }`}
-                >
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                        <h2 className="text-lg font-bold">Menu</h2>
-                        <button onClick={() => setShowMenu(false)}>
-                            <i className="ri-close-line text-xl"></i>
-                        </button>
-                    </div>
-
-                    <div className="flex flex-col gap-4 p-6">
-                        <button
-                            onClick={() => navigate("https://pa-admin-panel.vercel.app/signin")}
-                            className="text-black font-medium"
-                        >
-                            Supplier
-                        </button>
-                        <button
-                            onClick={handleAddcart}
-                            className="flex items-center gap-2 bg-gray-200 px-3 py-2 rounded-lg text-black font-semibold"
-                        >
-                            <i className="ri-shopping-cart-2-line"></i>
-                            My Cart
-                        </button>
-                        <button
-                            onClick={() => navigate('/')}
-                            className="flex items-center gap-2 bg-gray-200 px-3 py-2 rounded-lg text-black font-semibold"
-                        >
-                            Login
-                        </button>
-                    </div>
-                </div> */}
 
                 {showLogin && (
                     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]">
@@ -780,16 +632,15 @@ const Header = () => {
                         <div className="flex items-center bg-gray-100 rounded-lg px-3 py-2 m-3">
                             {/* Search Icon */}
                             <i className="ri-search-line text-black text-lg mr-2"></i>
-
                             {/* Input */}
-                            <input
+                            <CommanInput
                                 type="text"
                                 placeholder='Search "Mobile & Shop"'
-                                className="bg-transparent outline-none border-none focus:ring-0 flex-1 text-sm placeholder-gray-500"
                                 value={query}
+                                className="bg-transparent outline-none border-none focus:ring-0 flex-1 text-sm placeholder-gray-500"
                                 onChange={(e) => {
-                                    setQuery(e.target.value);
-                                    setShowDropdown(true);
+                                    setQuery(e.target.value)
+                                    setShowDropdown(true)
                                 }}
                             />
 
@@ -805,7 +656,7 @@ const Header = () => {
 
                             {/* Close Search (Right side) */}
                             <i
-                                className="ri-close-line text-2xl ml-3 cursor-pointer text-gray-600 hover:text-black"
+                                className="ri-close-line text-2xl ml-15 cursor-pointer text-gray-600 hover:text-black"
                                 onClick={() => {
                                     setShowMobileSearch(false);
                                     setQuery("");
@@ -840,13 +691,14 @@ const Header = () => {
 
                                 {/* View More Button */}
                                 <div className="w-full text-center px-4 py-4">
-                                    <button
+                                    <CommanButton
                                         onClick={handleShowAllResults}
-                                        className="inline-flex cursor-pointer items-center gap-3 text-base font-semibold"
-                                        style={{ color: "#251C4B" }}
-                                    >
-                                        View more →
-                                    </button>
+                                        className="inline-flex  gap-3"
+                                        bgColor="bg-white"
+                                        borDer="border-none"
+                                        textColor="[#251c4b]"
+                                        label="View more →"
+                                    />
                                 </div>
                             </div>
                         )}

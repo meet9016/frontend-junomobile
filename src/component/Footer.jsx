@@ -33,11 +33,6 @@ const Footer = () => {
         {/* Top Section */}
         <div className="flex flex-col items-center md:flex-row md:justify-between gap-8 pb-1">
           {/* Logo */}
-          {/* <img
-            src="https://superadmin.progressalliance.org/upload/web_logo/footer_logo.png"
-            alt="PA Logo"
-            className="w-[140px] md:w-[200px]"
-          /> */}
           <img
             src={`${import.meta.env.VITE_API_URL}/upload/web_logo/footer_logo.png`}
             alt="Website Logo"
@@ -72,7 +67,6 @@ const Footer = () => {
                   <i className="ri-instagram-line cursor-pointer hover:scale-110 hover:text-pink-500 transition-transform"></i>
                 </a>
               )}
-              {/* <i className="ri-instagram-line cursor-pointer hover:scale-110 hover:text-pink-500 transition-transform"></i> */}
               {footerData.facebook_link && (
                 <a
                   href={footerData.facebook_link}

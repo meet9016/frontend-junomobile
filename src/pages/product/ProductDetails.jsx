@@ -10,15 +10,15 @@ import { toast } from "react-toastify";
 import Login from "../auth/Login";
 import Product from ".";
 import { classNames } from "primereact/utils";
+import CommanButton from "../../comman/CommanButton";
 // import PageMeta from "../utils.jsx/PageMeta";
-
-
+import InnerImageZoom from 'react-inner-image-zoom';
+import 'react-inner-image-zoom/lib/styles.min.css';
 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-
   const [singleProductData, setSingleProductData] = useState([]);
   const [supplierData, setSupplierData] = useState([]);
   const [count, setCount] = useState(1);
@@ -30,8 +30,6 @@ const ProductDetails = () => {
   const [remarkData, setRemarkData] = useState("");
   const [loading, setLoading] = useState(false);
 
-
-
   const getSingleProductData = async () => {
     setLoading(true)
     try {
@@ -39,7 +37,6 @@ const ProductDetails = () => {
       formdata.append("product_id", id);
       // setLoading(true);
       const res = await api.post(endPointApi.postSingleProduct, formdata);
-
       if (res?.data && res?.data?.data) {
         setSingleProductData(res?.data?.data || []);
         if (res?.data?.data?.images?.length > 0) {
@@ -102,9 +99,7 @@ const ProductDetails = () => {
       formData.append("product_id", id);
       formData.append("quantity", count);
       formData.append("remark", remarkData);
-
       const res = await api.post(endPointApi.inquiryPopup, formData);
-
       if (res.data && res.data.data) {
         setInquiryPopup(false);
         setRemarkData("");
@@ -122,6 +117,14 @@ const ProductDetails = () => {
       navigate(`/view-shop/${supplierData.supplier_details_id}`)
     }
   }
+
+  const dummyData = Array.from({ length: 10 }, (_, i) => ({
+    id: i + 1,
+    name: `Name-${1000 + i}`,
+    city: `City ${i + 1}`,
+    color: `Color ${i + 1}`,
+  }));
+
 
   return (
     <>
@@ -193,7 +196,7 @@ const ProductDetails = () => {
               </div>
 
               {/* Main Image - Right side */}
-              <div className="overflow-hidden rounded-lg flex-1">
+              {/* <div className="overflow-hidden rounded-lg flex-1">
                 {loading ? (
                   <div className="h-[280px] sm:h-[500px]">
                     <Skeleton
@@ -215,7 +218,40 @@ const ProductDetails = () => {
                     className="w-full h-[300px] md:h-[500px] object-contain bg-white rounded-2xl p-10"
                   />
                 )}
+              </div> */}
+
+
+              <div className="overflow-hidden rounded-lg flex-1">
+                {loading ? (
+                  <div className="h-[280px] sm:h-[500px]">
+                    <Skeleton
+                      baseColor="#D1D5DB"
+                      highlightColor="#E5E7EB"
+                      className="w-full h-full"
+                    />
+                  </div>
+                ) : (
+                  <InnerImageZoom
+                    src={
+                      selectedImage ||
+                      (singleProductData?.images?.length > 0
+                        ? singleProductData.images[0].image
+                        : "/src/Image/No image.jpg")
+                    }
+
+                    hasSpacer={true}
+                    zoomSrc={
+                      selectedImage ||
+                      (singleProductData?.images?.length > 0
+                        ? singleProductData.images[0].image
+                        : "/src/Image/No image.jpg")
+                    }
+                    alt={singleProductData?.product_name || "Product"}
+                    className="w-full h-[300px] md:h-[500px] object-contain bg-white rounded-2xl p-10"
+                  />
+                )}
               </div>
+
             </div>
 
             <div className=" sm:mt-4 px-2 mt-0 sm:px-4 lg:px-0 space-y-2 sm:space-y-5">
@@ -256,9 +292,6 @@ const ProductDetails = () => {
                 </>
               )}
 
-
-
-
               <div className="w-full flex mt-3 flex-col sm:flex-row items-center justify-between gap-4">
                 {loading ? (
                   <div className="animate-pulse w-full h-24 bg-gray-300 rounded-lg"></div>
@@ -266,21 +299,18 @@ const ProductDetails = () => {
                   <>
                     <div className="flex flex-col sm:flex-row w-full gap-4">
                       {/* Wishlist Button */}
-                      <button
-                        className="flex-1 border border-gray-300 hover:border-[#251c4b] hover:text-white cursor-pointer
-               text-white py-3 rounded-lg flex items-center justify-center gap-2 
-               text-base sm:text-lg  bg-[#251c4b] shadow-sm 
-               hover:shadow-md transition-all "
-                      >
-                        <i className="ri-heart-line text-xl"></i>
-                        <span>Add to Wishlist</span>
-                      </button>
+                      <CommanButton
+                        className=" py-3 "
+                        label={
+                          <>
+                            <i className="ri-heart-line text-xl"></i>
+                            <span>Add to Wishlist</span>
+                          </>
+                        }
+                      />
 
                       {/* Inquiry Button */}
-                      <button
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg 
-               flex items-center justify-center gap-3 text-base sm:text-lg cursor-pointer 
-               shadow-md transition-all duration-300"
+                      <CommanButton
                         onClick={() => {
                           if (!auth_token) {
                             localStorage.setItem("redirectAfterLogin", location.pathname);
@@ -289,41 +319,46 @@ const ProductDetails = () => {
                           }
                           setInquiryPopup(true);
                         }}
-                      >
-                        <i className="ri-whatsapp-fill text-2xl"></i> Inquiry
-                      </button>
+                        textColor="text-white"
+                        bgColor="bg-green-600"
+                        className="py-3"
+                        label={
+                          <span className="flex items-center gap-2">
+                            <i className="ri-whatsapp-fill text-2xl"></i>
+                            Inquiry
+                          </span>
+                        }
+                      />
                     </div>
-
                   </>
                 )}
               </div>
 
-
-
               <div className=" rounded-xl border border-gray-200 mt-3 p-0">
                 {loading ? (
-
                   <div className="animate-pulse w-full h-40 bg-gray-300 rounded-xl"></div>
                 ) : (
                   <div className="bg-white rounded-xl p-4">
-                    <h3 className="text-lg font-bold text-gray-900 border-b border-gray-300 pb-2 mb-4">
-                      Mobile Details
-                    </h3>
-
-                    <ul className="space-y-2 text-gray-700 text-sm">
-                      <li className="flex">
-                        <span className="w-32 font-medium text-gray-900">SKU</span>
-                        <span className="text-gray-600">{singleProductData?.sku}</span>
-                      </li>
-                      <li className="flex">
-                        <span className="w-32 font-medium text-gray-900">Category</span>
-                        <span className="text-gray-600">{singleProductData?.category_name}</span>
-                      </li>
-                      <li className="flex">
-                        <span className="w-32 font-medium text-gray-900">Sub Category</span>
-                        <span className="text-gray-600">{singleProductData?.sub_category_name}</span>
-                      </li>
-                    </ul>
+                    <table className="w-full border border-gray-200 text-sm text-left text-gray-700">
+                      <thead className="bg-gray-100 text-gray-900 font-semibold">
+                        <tr>
+                          <th className="px-4 py-2 border-b border-gray-300">ID</th>
+                          <th className="px-4 py-2 border-b border-gray-300">NAME</th>
+                          <th className="px-4 py-2 border-b border-gray-300">CITY</th>
+                          <th className="px-4 py-2 border-b border-gray-300">COLOR</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {dummyData.map((row) => (
+                          <tr key={row.id} className="hover:bg-gray-50">
+                            <td className="px-4 py-2 border-b border-gray-200">{row.id}</td>
+                            <td className="px-4 py-2 border-b border-gray-200">{row.name}</td>
+                            <td className="px-4 py-2 border-b border-gray-200">{row.city}</td>
+                            <td className="px-4 py-2 border-b border-gray-200">{row.color}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </div>
@@ -345,10 +380,8 @@ const ProductDetails = () => {
                     <h2 className="text-lg font-bold text-gray-900 border-b border-gray-300 pb-2 mb-4">
                       Sold By
                     </h2>
-
                     {/* Parent Container */}
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 p-2 rounded-lg bg-white">
-
                       {/* Left Part - Image */}
                       <div className="w-28 h-28 flex-shrink-0 flex items-center justify-center rounded-md border shadow-md border-gray-200 bg-white p-2 
       mx-auto sm:mx-0 order-1 sm:order-1">
@@ -358,19 +391,16 @@ const ProductDetails = () => {
                           className="w-full h-full object-contain rounded-md"
                         />
                       </div>
-
                       {/* Center Part - Company + Details */}
                       <div className="flex flex-col flex-1 items-center sm:items-start text-center sm:text-left order-2 sm:order-2">
                         {/* Company Name */}
                         <h4 className="text-lg sm:text-xl font-medium text-gray-900 truncate">
                           {supplierData.company_name}
                         </h4>
-
                         {/* Full Name */}
                         <p className="text-sm sm:text-base font-medium text-black mt-1">
                           {supplierData.full_name} ({supplierData.chapter_short_name})
                         </p>
-
                         {/* Total Products */}
                         <div className="flex flex-row items-center justify-center sm:justify-start gap-2 mt-1">
                           <h4 className="text-base sm:text-lg font-medium text-black">
@@ -378,19 +408,14 @@ const ProductDetails = () => {
                           </h4>
                           <p className="text-sm sm:text-base font-medium">Products</p>
                         </div>
-
                       </div>
 
                       {/* Right Part - Button */}
                       <div className="w-full sm:w-auto flex justify-center sm:justify-end order-3 sm:order-3 mt-3 sm:mt-0">
-                        <button
+                        <CommanButton
+                          label="View Shop"
                           onClick={handleViewShop}
-                          className="px-5 py-1 rounded-lg border-2 bg-[#251c4b] border-[#1d163e] 
-        text-white font-medium shadow-md hover:bg-[#1d163e] transition 
-        w-full sm:w-auto"
-                        >
-                          View Shop
-                        </button>
+                        />
                       </div>
                     </div>
                   </div>
@@ -398,8 +423,6 @@ const ProductDetails = () => {
               </div>
             </div>
           </div>
-
-
 
           {/* Description Section */}
           <div className={`mt-4 sm:mt-12 ${singleProductData?.related_products?.length === 0 ? "sm:pb-15 pb-5" : ""
@@ -424,7 +447,6 @@ const ProductDetails = () => {
                   <span className="absolute left-1/2 -bottom-2 w-16 sm:w-20 h-0.5 bg-gradient-to-r from-[#251C4B] to-[#5D4D9E] rounded transform -translate-x-1/2"></span>
                 </h2>
               </div>
-
               <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-8  hover: cursor-pointer">
                 {singleProductData?.related_products?.length > 0 && (
                   singleProductData.related_products.map((item, index) => (
@@ -433,7 +455,6 @@ const ProductDetails = () => {
                       data-aos="fade-up"
                       className="group border border-gray-200 rounded-xl p-4 hover:shadow-xl transition-all bg-white flex flex-col justify-between relative"
                     >
-
                       <div className="w-full h-[150px] sm:h-[160px] flex items-center justify-center mb-3 perspective-1000">
                         <div
                           className="w-full h-full relative group preserve-3d"
@@ -442,7 +463,6 @@ const ProductDetails = () => {
                             window.scrollTo({ top: 0, behavior: "smooth" });
                           }}
                         >
-
                           <div className="absolute inset-0 backface-hidden transform  group-hover:scale-105 transition-all duration-500">
                             <img
                               src={
@@ -454,9 +474,6 @@ const ProductDetails = () => {
                               className="w-full h-full object-contain"
                             />
                           </div>
-
-
-
                         </div>
                       </div>
 
@@ -478,37 +495,16 @@ const ProductDetails = () => {
                           </span>
                         )}
                       </div>
-
-
-                      <button
-                        className="
-        opacity-100             
-        sm:opacity-50            
-        sm:group-hover:opacity-100 
-        cursor-pointer
-        mt-4 px-3 py-2 
-        border bg-[#251c4b] border-[#251c4b] 
-        text-white rounded-lg 
-        transition text-md
-      "
-                      >
-                        View Product
-                      </button>
+                      <CommanButton
+                        label="View Product"
+                      />
                     </div>
                   ))
                 )}
               </div>
             </div>
           )}
-
         </div>
-
-
-
-
-
-
-
 
         {
           inquiryPopup && (
@@ -532,7 +528,7 @@ const ProductDetails = () => {
                     Message
                   </label>
                   <textarea
-                    rows={5}
+                    rows={7}
                     placeholder="Write your message here..."
                     value={remarkData}
                     onChange={(e) => setRemarkData(e.target.value)}
@@ -541,28 +537,22 @@ const ProductDetails = () => {
                 </div>
 
                 {/* Buttons */}
-                {/* Buttons */}
-                <div className="flex justify-between items-center mt-4">
-                  <button
+                <div className="flex justify-between items-center gap-8 sm:gap-100 mt-4">
+                  <CommanButton
                     onClick={sendInquiry}
-                    className="px-4 cursor-pointer sm:px-6 py-2 rounded-lg bg-[#251c4b] text-white hover:bg-[#1c1536] transition text-sm sm:text-base"
-                  >
-                    Send
-                  </button>
-                  <button
+                    label="Send"
+                  />
+                  <CommanButton
                     onClick={() => setInquiryPopup(false)}
-                    className="px-4 cursor-pointer sm:px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition text-sm sm:text-base"
-                  >
-                    Cancel
-                  </button>
+                    label="Cancel"
+                    bgColor="bg-gray-300"
+                    textColor="text-black"
+                  />
                 </div>
-
               </div>
             </div>
           )
         }
-
-
 
         {
           showLogin && (
@@ -572,12 +562,12 @@ const ProductDetails = () => {
                 data-aos-duration="600"
                 data-aos-easing="ease-out-cubic"
                 className="relative  rounded-lg w-[95%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-h-[90vh] overflow-y-auto p-4">
-                <button
+                <span
                   onClick={() => setShowLogin(false)}
                   className="absolute cursor-pointer top-5 right-10 translate-x-[-4px] translate-y-[4px] text-black text-xl"
                 >
                   <i class="ri-close-large-line"></i>
-                </button>
+                </span>
 
                 {/* Login Form */}
                 <Login onClose={() => setShowLogin(false)} />
