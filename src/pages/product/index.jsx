@@ -10,10 +10,7 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import CommanCardList from "../../comman/CommanCardList";
 
-
-
-
-const Product = () => {
+const Index = () => {
   const navigate = useNavigate();
   const { categories_id, sub_category_id } = useParams();
   const [singleProductData, setSingleProductData] = useState([]);
@@ -35,7 +32,6 @@ const Product = () => {
         setName(res?.data);
       }
     } catch (err) {
-      console.log("Error Fetch data", err);
     } finally {
       setLoading(false);
     }
@@ -59,7 +55,7 @@ const Product = () => {
       {/* <PageMeta title="Sub-Category" description="This is sub-category-page" /> */}
       <div className="w-full px-4 bg-[#EAEBEF] flex mt-[60px] sm:mt-[80px] justify-center">
         <div className="w-full max-w-[1300px] mt-2 md:mt-4 pb-6">
-          <div className="w-full mt-0 mb-0 sm:mt-1 sm:mb-2 md:mb-12 flex justify-center">
+          <div className="w-full mt-0 mb-0 sm:mt-0 sm:mb-2 md:mb-5 flex justify-center">
             {loading ? (
               <Skeleton
                 height={70}
@@ -73,25 +69,32 @@ const Product = () => {
                 <h2 className="inline-block relative text-lg sm:text-3xl font-bold text-gray-900 tracking-tight">
                   {name?.data?.categories_name}
                 </h2>
-                <p className="mt-1 sm:mt-2 text-gray-500 text-sm sm:text-lg">
+                {/* <p className="mt-1 sm:mt-2 text-gray-500 text-sm sm:text-lg">
                   Explore our latest collection in
                   <span className="text-black font-semibold">
                     {" "}
                     {name?.data?.categories_name}
+                  </span>
+                </p> */}
+                 <p className="mt-1 sm:mt-2 text-gray-500 text-sm sm:text-lg">
+                  Your perfect mobile awaits at
+                  <span className="text-black font-semibold">
+                    {" "}
+                    Juno Mobile.
                   </span>
                 </p>
               </div>
             )}
           </div>
           {/*  Show Card */}
-          <CommanCardList data={singleProductData} loading={loading} />
+          <CommanCardList data={singleProductData} loading={loading} isTrue={true}/>
         </div>
       </div>
     </>
   );
 };
 
-export default Product;
+export default Index;
 
 
 

@@ -48,7 +48,7 @@ const Search = () => {
         <div className="w-full mt-9 md:mt-[80px] bg-[#EAEBEF] flex justify-center">
             <div className="w-full max-w-[1300px] mt-3 sm:mt-0 sm:p-0 p-4 pb-5">
                 {/* Show Card */}
-                <CommanCardList data={singleProductData} loading={loading} />
+                <CommanCardList data={singleProductData} loading={loading} isTrue={true} />
             </div>
         </div>
     );

@@ -12,6 +12,7 @@ const CommanButton = ({
     gap = "2",
     borDer = "border",
     shaDow = "shadow-5xl"
+
 }) => {
     const defaultClass = `
     px-4 py-2 
@@ -33,7 +34,7 @@ const CommanButton = ({
             type={type}
             onClick={onClick}
             disabled={disabled}
-            className={`${defaultClass} ${bgColor} ${className} ${opacity} ${textColor} ${gap} ${borDer} ${shaDow}`}
+            className={`${defaultClass} ${bgColor} ${className} ${opacity} ${textColor} ${gap} ${borDer} ${shaDow} `}
         >
             {label}
         </button>

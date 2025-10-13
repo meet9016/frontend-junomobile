@@ -29,7 +29,7 @@ const Home = () => {
   const [showLogin, setShowLogin] = useState(false)
   const [skeletonCount, setSkeletonCount] = useState(2);
 
-  
+
   const stories = [
     {
       name: "Shafi Anwar",
@@ -93,7 +93,7 @@ const Home = () => {
       setLoading(true);
       const res = await api.post(endPointApi.postHome, {});
       if (res.data && res.data.data) {
-        setProduct(res.data.data|| []);
+        setProduct(res.data.data || []);
       }
     } catch (err) {
       console.log("Error Fetch data", err);
@@ -109,7 +109,7 @@ const Home = () => {
 
   return (
     <>
-      <Header />
+
       {/* <PageMeta title="Home" description="This is the Dashboard page" /> */}
       <div className="w-full pt-[60px] bg-[#EAEBEF] sm:pt-[80px] md:pt-[100px]">
         {/* Main Container with fixed width */}
@@ -259,6 +259,7 @@ const Home = () => {
                     {product.all_categories?.map((item, index) => (
                       <div
                         key={index}
+                        onClick={() => navigate(`/model/${item.categories_id}`)}
                         className="flex flex-col items-center justify-center bg-white shadow-md rounded-xl p-6 cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg"
                       >
                         <img
@@ -273,10 +274,9 @@ const Home = () => {
               )
             }
 
-            <div className="bg-[#d9f4f1] p-6 sm:p-12  rounded-xl">
+            {/* <div className="bg-[#d9f4f1] p-6 sm:p-12  rounded-xl">
               <h2 className="text-xl sm:text-3xl font-bold mb-6">Why Us</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Item 1 */}
                 <div className="flex items-start gap-3">
                   <img src="https://s3ng.cashify.in/estore/99953fd419e2416ba7dc25e0164372c3.png?w=70" alt="Best Prices" className="w-16 h-16 object-contain" />
                   <div>
@@ -285,7 +285,6 @@ const Home = () => {
                   </div>
                 </div>
 
-                {/* Item 2 */}
                 <div className="flex items-start gap-3">
                   <img src="https://s3ng.cashify.in/estore/acef68f939a84a8884640ae56f70867f.png?w=70" alt="Instant Payment" className="w-16 h-16 object-contain" />
                   <div>
@@ -294,7 +293,6 @@ const Home = () => {
                   </div>
                 </div>
 
-                {/* Item 3 */}
                 <div className="flex items-start gap-3">
                   <img src="https://s3ng.cashify.in/estore/7989ad6b9431414481a1e9dcda098d45.png?w=70" alt="Simple & Convenient" className="w-16 h-16 object-contain" />
                   <div>
@@ -303,7 +301,6 @@ const Home = () => {
                   </div>
                 </div>
 
-                {/* Item 4 */}
                 <div className="flex items-start gap-3">
                   <img src="https://s3ng.cashify.in/estore/3c0a0e2e0f4945c09e941a10bcf66e83.png?w=70" alt="Free Doorstep Pickup" className="w-16 h-16 object-contain" />
                   <div>
@@ -312,7 +309,6 @@ const Home = () => {
                   </div>
                 </div>
 
-                {/* Item 5 */}
                 <div className="flex items-start gap-3">
                   <img src="https://s3ng.cashify.in/estore/09bf461127cd48acb409f207e1664438.png?w=70" alt="Factory Grade Data Wipe" className="w-16 h-16 object-contain" />
                   <div>
@@ -321,7 +317,6 @@ const Home = () => {
                   </div>
                 </div>
 
-                {/* Item 6 */}
                 <div className="flex items-start gap-3">
                   <img src="https://s3ng.cashify.in/estore/4413e4f7e0e448f88a73bd4e6047e93d.png?w=70" alt="Valid Purchase Invoice" className="w-16 h-16 object-contain" />
                   <div>
@@ -330,11 +325,11 @@ const Home = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
 
 
-            <div className=" w-full mt-4 sm:mt-9">
+            {/* <div className=" w-full mt-4 sm:mt-9">
               <h2 className="text-black text-3xl font-bold text-center mb-5">
                 Customer Stories
               </h2>
@@ -377,11 +372,11 @@ const Home = () => {
                   </SwiperSlide>
                 ))}
               </Swiper>
-            </div>
+            </div> */}
 
 
 
-            <div className="w-full mt-4 sm:mt-9">
+            {/* <div className="w-full mt-4 sm:mt-9">
               <h2 className="text-black text-3xl font-bold text-left mb-4">FAQs</h2>
 
               <Accordion transition transitionTimeout={250}>
@@ -409,11 +404,11 @@ const Home = () => {
                   </AccordionItem>
                 ))}
               </Accordion>
-            </div>
+            </div> */}
 
 
 
-            <div className="w-full mt-4 sm:mt-9">
+            {/* <div className="w-full mt-4 sm:mt-9">
               <h2 className="text-black text-3xl font-bold text-left mb-4">
                 Why Choose Cashify?
               </h2>
@@ -446,7 +441,7 @@ const Home = () => {
                   />
                 </div>
               </div>
-            </div>
+            </div> */}
 
 
           </div>
@@ -474,24 +469,4 @@ export default Home;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                             

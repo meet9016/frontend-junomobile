@@ -5,8 +5,10 @@ const endPointApi = {
     postHome: 'home',
     postCategorySingleProduct: 'category-product-list',
     postSingleProduct: 'single-product-list',
-    postAddToCart: 'add-to-cart',
-    postCartList: 'cart-list',
+    // postAddToCart: 'add-to-cart',
+    postAddToWishList: 'add-to-wishlist',
+    // postCartList: 'cart-list',
+    postWishList: 'wishlist-list',
     postOrderWiaWhatsapp: 'order-on-whatsapp',
     autoSuggestionProductList: 'auto-suggestion-product-list',
     viewMoreSearchProductList: 'view-more-search-product-list',
@@ -17,6 +19,7 @@ const endPointApi = {
     inquiryPopup: 'add-to-direct-inquiry',
     supplierProductList: 'supplier-web-product-list',
     footerSocialMedia: 'policy_and_social_media',
+    addToFollow: 'add-to-follow'
 };
 
 export default endPointApi;

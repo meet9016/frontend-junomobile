@@ -5,7 +5,7 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL, // Env se URL le raha hai
 });
 
-// ✅ Request Interceptor (auth token add karne ke liye)
+//  Request Interceptor (auth token add karne ke liye)
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("auth_token"); // ya sessionStorage
@@ -17,7 +17,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ Response Interceptor (error handle karne ke liye)
+// Response Interceptor (error handle karne ke liye)
 api.interceptors.response.use(
   (response) => response,
   (error) => {

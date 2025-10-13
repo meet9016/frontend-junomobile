@@ -103,7 +103,7 @@ const Footer = () => {
       {/* Bottom copyright */}
       <div className="w-full bg-white text-center text-black py-4 text-xs sm:text-sm">
         <p className="px-4 leading-relaxed">
-          © {new Date().getFullYear()} Progress Alliance Foundation. All Rights
+          © {new Date().getFullYear()} Juno Mobile. All Rights
           Reserved. | Designed with{" "}
           <i className="ri-heart-fill text-[#fd317b]"></i> by{" "}
           <a

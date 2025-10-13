@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import api from "../utils.jsx/axiosInstance";
 import endPointApi from "../utils.jsx/endPointApi";
@@ -8,12 +8,11 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { toast } from "react-toastify";
 import Login from "../auth/Login";
-import Product from ".";
-import { classNames } from "primereact/utils";
 import CommanButton from "../../comman/CommanButton";
 // import PageMeta from "../utils.jsx/PageMeta";
 import InnerImageZoom from 'react-inner-image-zoom';
 import 'react-inner-image-zoom/lib/styles.min.css';
+import CommanCardList from "../../comman/CommanCardList";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -23,22 +22,25 @@ const ProductDetails = () => {
   const [supplierData, setSupplierData] = useState([]);
   const [count, setCount] = useState(1);
   const [selectedImage, setSelectedImage] = useState("");
-  const [activeTab, setActiveTab] = useState("description");
   const [showLogin, setShowLogin] = useState(false)
   const auth_token = localStorage.getItem("auth_token");
   const [inquiryPopup, setInquiryPopup] = useState(false)
   const [remarkData, setRemarkData] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isWishlist, setIsWishlist] = useState(false);
+
 
   const getSingleProductData = async () => {
     setLoading(true)
     try {
       const formdata = new FormData();
       formdata.append("product_id", id);
-      // setLoading(true);
+      setLoading(true);
       const res = await api.post(endPointApi.postSingleProduct, formdata);
       if (res?.data && res?.data?.data) {
         setSingleProductData(res?.data?.data || []);
+        setIsWishlist(res?.data?.data?.is_wishlist || false);
+
         if (res?.data?.data?.images?.length > 0) {
           setSelectedImage(res.data.data.images[0].image);
         }
@@ -64,34 +66,29 @@ const ProductDetails = () => {
     });
   }, []);
 
-  const addToCart = () => {
-    try {
-      if (!auth_token) {
-        localStorage.setItem("redirectAfterLogin", location.pathname);
-        setShowLogin(true)
-        return;
-        // toast.error("Please Loginss!")
-      }
-      const formdata = new FormData();
-      formdata.append("product_id", id);
-      formdata.append("quantity", count);
-      formdata.append("type", 1);
-      console.log("res0000111");
-
-      api.post(endPointApi.postAddToCart, formdata).then((res) => {
-        console.log("res0000", res);
-
-        if (res.data.status == 200) {
-          toast.success(res?.data?.message);
-        }
-      });
-      // if (res.sta) console.log("res", res);
-    } catch (err) {
-      console.log("Error Fetch data", err);
-    } finally {
-      // setLoading(false)
+  const addWishList = async () => {
+    if (!auth_token) {
+      localStorage.setItem("redirectAfterLogin", location.pathname);
+      setShowLogin(true);
+      return
     }
-  };
+    try {
+      setLoading(true)
+      const formData = new FormData();
+      formData.append('product_id', id)
+      const res = await api.post(endPointApi.postAddToWishList, formData)
+      if (res.data && res.data.data) {
+        toast.success(res.data.message)
+        setIsWishlist(!isWishlist);
+      } else {
+        toast.error(res.data.message)
+      }
+    } catch (err) {
+      console.log("Fetch error", err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const sendInquiry = async () => {
     try {
@@ -118,12 +115,6 @@ const ProductDetails = () => {
     }
   }
 
-  const dummyData = Array.from({ length: 10 }, (_, i) => ({
-    id: i + 1,
-    name: `Name-${1000 + i}`,
-    city: `City ${i + 1}`,
-    color: `Color ${i + 1}`,
-  }));
 
 
   return (
@@ -150,7 +141,7 @@ const ProductDetails = () => {
                 <span
                   className="cursor-pointer hover:text-black "
                   onClick={() =>
-                    navigate(`/category/${singleProductData?.category_id}`)
+                    navigate(`/model/${singleProductData?.category_id}`)
                   }
                 >
                   {singleProductData?.category_name}
@@ -196,7 +187,7 @@ const ProductDetails = () => {
               </div>
 
               {/* Main Image - Right side */}
-              {/* <div className="overflow-hidden rounded-lg flex-1">
+              <div className="overflow-hidden rounded-lg flex-1">
                 {loading ? (
                   <div className="h-[280px] sm:h-[500px]">
                     <Skeleton
@@ -215,46 +206,140 @@ const ProductDetails = () => {
                         : "/src/Image/No image.jpg")
                     }
                     alt={singleProductData?.product_name || "Product"}
-                    className="w-full h-[300px] md:h-[500px] object-contain bg-white rounded-2xl p-10"
+                    className="w-full h-[300px] md:h-[500px] object-contain bg-white rounded-2xl p-8"
                   />
                 )}
-              </div> */}
+                <div className="w-full flex mt-3 flex-col sm:flex-row items-center justify-between gap-4">
+                  {loading ? (
+                    <div className="animate-pulse w-full h-24 bg-gray-300 rounded-lg"></div>
+                  ) : (
+                    <>
+                      <div className="flex flex-col sm:flex-row w-full gap-4">
+                        {/* Wishlist Button */}
+                        <CommanButton
+                          onClick={addWishList}
+                          className=" py-3 "
+                          label={
+                            <>
+                              <i
+                                className={
+                                  isWishlist
+                                    ? "ri-heart-fill text-white text-xl"
+                                    : "ri-heart-line text-xl"
+                                }
+                              ></i>
+                              <span>{isWishlist ? "Added to Wishlist" : "Add to Wishlist"}</span>
+                            </>
+                          }
+                        />
+
+                        {/* Inquiry Button */}
+                        <CommanButton
+                          onClick={() => {
+                            if (!auth_token) {
+                              localStorage.setItem("redirectAfterLogin", location.pathname);
+                              setShowLogin(true);
+                              return;
+                            }
+                            setInquiryPopup(true);
+                          }}
+                          textColor="text-white"
+                          bgColor="bg-green-600"
+                          className="py-3"
+                          label={
+                            <span className="flex items-center gap-2">
+                              <i className="ri-whatsapp-fill text-2xl"></i>
+                              Inquiry
+                            </span>
+                          }
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
 
 
-              <div className="overflow-hidden rounded-lg flex-1">
+              {/* <div className="overflow-hidden rounded-2xl flex-1">
                 {loading ? (
-                  <div className="h-[280px] sm:h-[500px]">
+                  <div className="aspect-square"> 
                     <Skeleton
                       baseColor="#D1D5DB"
                       highlightColor="#E5E7EB"
-                      className="w-full h-full"
+                      className="w-full h-full rounded-2xl"
                     />
                   </div>
                 ) : (
-                  <InnerImageZoom
-                    src={
-                      selectedImage ||
-                      (singleProductData?.images?.length > 0
-                        ? singleProductData.images[0].image
-                        : "/src/Image/No image.jpg")
-                    }
-
-                    hasSpacer={true}
-                    zoomSrc={
-                      selectedImage ||
-                      (singleProductData?.images?.length > 0
-                        ? singleProductData.images[0].image
-                        : "/src/Image/No image.jpg")
-                    }
-                    alt={singleProductData?.product_name || "Product"}
-                    className="w-full h-[300px] md:h-[500px] object-contain bg-white rounded-2xl p-10"
-                  />
+                  <div className="bg-white p-6 rounded-2xl flex items-center justify-center ">
+                    <InnerImageZoom
+                      src={
+                        selectedImage ||
+                        (singleProductData?.images?.length > 0
+                          ? singleProductData.images[0].image
+                          : "/src/Image/No image.jpg")
+                      }
+                      hasSpacer={true}
+                      zoomSrc={
+                        selectedImage ||
+                        (singleProductData?.images?.length > 0
+                          ? singleProductData.images[0].image
+                          : "/src/Image/No image.jpg")
+                      }
+                      alt={singleProductData?.product_name || "Product"}
+                      className="aspect-square w-full object-contain rounded-xl"
+                    />
+                  </div>
                 )}
-              </div>
+                <div className="w-full flex mt-3 flex-col sm:flex-row items-center justify-between gap-4">
+                  {loading ? (
+                    <div className="animate-pulse w-full h-24 bg-gray-300 rounded-lg"></div>
+                  ) : (
+                    <>
+                      <div className="flex flex-col sm:flex-row w-full gap-4">
+                        <CommanButton
+                          onClick={addWishList}
+                          className=" py-3 "
+                          label={
+                            <>
+                              <i
+                                className={
+                                  isWishlist
+                                    ? "ri-heart-fill text-white text-xl"
+                                    : "ri-heart-line text-xl"
+                                }
+                              ></i>
+                              <span>{isWishlist ? "Added to Wishlist" : "Add to Wishlist"}</span>
+                            </>
+                          }
+                        />
 
+                        <CommanButton
+                          onClick={() => {
+                            if (!auth_token) {
+                              localStorage.setItem("redirectAfterLogin", location.pathname);
+                              setShowLogin(true);
+                              return;
+                            }
+                            setInquiryPopup(true);
+                          }}
+                          textColor="text-white"
+                          bgColor="bg-green-600"
+                          className="py-3"
+                          label={
+                            <span className="flex items-center gap-2">
+                              <i className="ri-whatsapp-fill text-2xl"></i>
+                              Inquiry
+                            </span>
+                          }
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div> */}
             </div>
 
-            <div className=" sm:mt-4 px-2 mt-0 sm:px-4 lg:px-0 space-y-2 sm:space-y-5">
+            <div className="max-h-[800px] overflow-y-auto overflow-x-hidden sm:mt-4 px-2 mt-0 sm:px-4 lg:px-0 space-y-2 sm:space-y-5" style={{ scrollbarWidth: 'none' }}>
               {loading ? (
                 <div className="w-full">
                   <Skeleton
@@ -292,73 +377,33 @@ const ProductDetails = () => {
                 </>
               )}
 
-              <div className="w-full flex mt-3 flex-col sm:flex-row items-center justify-between gap-4">
-                {loading ? (
-                  <div className="animate-pulse w-full h-24 bg-gray-300 rounded-lg"></div>
-                ) : (
-                  <>
-                    <div className="flex flex-col sm:flex-row w-full gap-4">
-                      {/* Wishlist Button */}
-                      <CommanButton
-                        className=" py-3 "
-                        label={
-                          <>
-                            <i className="ri-heart-line text-xl"></i>
-                            <span>Add to Wishlist</span>
-                          </>
-                        }
-                      />
-
-                      {/* Inquiry Button */}
-                      <CommanButton
-                        onClick={() => {
-                          if (!auth_token) {
-                            localStorage.setItem("redirectAfterLogin", location.pathname);
-                            setShowLogin(true);
-                            return;
-                          }
-                          setInquiryPopup(true);
-                        }}
-                        textColor="text-white"
-                        bgColor="bg-green-600"
-                        className="py-3"
-                        label={
-                          <span className="flex items-center gap-2">
-                            <i className="ri-whatsapp-fill text-2xl"></i>
-                            Inquiry
-                          </span>
-                        }
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-
               <div className=" rounded-xl border border-gray-200 mt-3 p-0">
                 {loading ? (
-                  <div className="animate-pulse w-full h-40 bg-gray-300 rounded-xl"></div>
+                  <div className="animate-pulse w-full h-150 bg-gray-300 rounded-xl"></div>
                 ) : (
-                  <div className="bg-white rounded-xl p-4">
-                    <table className="w-full border border-gray-200 text-sm text-left text-gray-700">
-                      <thead className="bg-gray-100 text-gray-900 font-semibold">
-                        <tr>
-                          <th className="px-4 py-2 border-b border-gray-300">ID</th>
-                          <th className="px-4 py-2 border-b border-gray-300">NAME</th>
-                          <th className="px-4 py-2 border-b border-gray-300">CITY</th>
-                          <th className="px-4 py-2 border-b border-gray-300">COLOR</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {dummyData.map((row) => (
-                          <tr key={row.id} className="hover:bg-gray-50">
-                            <td className="px-4 py-2 border-b border-gray-200">{row.id}</td>
-                            <td className="px-4 py-2 border-b border-gray-200">{row.name}</td>
-                            <td className="px-4 py-2 border-b border-gray-200">{row.city}</td>
-                            <td className="px-4 py-2 border-b border-gray-200">{row.color}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <div className="rounded-xl border border-gray-200 mt-3 p-0">
+                    {loading ? (
+                      <div className="animate-pulse w-full h-150 bg-gray-300 rounded-xl"></div>
+                    ) : (
+                      <div className="bg-white rounded-xl p-4">
+                        <table className="w-full border border-gray-200 text-sm text-left text-gray-700">
+                          <thead className="bg-gray-100 text-gray-900 font-semibold">
+                            <tr>
+                              <th className="px-4 py-2 border-b border-gray-300">Specification</th>
+                              <th className="px-4 py-2 border-b border-gray-300">Detail</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {singleProductData?.product_details?.map((item, index) => (
+                              <tr key={index} className="hover:bg-gray-50">
+                                <td className="px-4 py-2 border-b border-gray-200">{item.specification}</td>
+                                <td className="px-4 py-2 border-b border-gray-200">{item.detail}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -443,65 +488,15 @@ const ProductDetails = () => {
             <div className="mt-4 sm:mt-12 w-full">
               <div className="flex items-center justify-center pb-5 mb-5">
                 <h2 className="text-2xl sm:text-3xl font-bold text-center text-[#251C4B] relative">
-                  Related Products
+                  Related Mobiles
                   <span className="absolute left-1/2 -bottom-2 w-16 sm:w-20 h-0.5 bg-gradient-to-r from-[#251C4B] to-[#5D4D9E] rounded transform -translate-x-1/2"></span>
                 </h2>
               </div>
-              <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-8  hover: cursor-pointer">
-                {singleProductData?.related_products?.length > 0 && (
-                  singleProductData.related_products.map((item, index) => (
-                    <div
-                      key={index}
-                      data-aos="fade-up"
-                      className="group border border-gray-200 rounded-xl p-4 hover:shadow-xl transition-all bg-white flex flex-col justify-between relative"
-                    >
-                      <div className="w-full h-[150px] sm:h-[160px] flex items-center justify-center mb-3 perspective-1000">
-                        <div
-                          className="w-full h-full relative group preserve-3d"
-                          onClick={() => {
-                            navigate(`/single-product/${item.product_id}`);
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                          }}
-                        >
-                          <div className="absolute inset-0 backface-hidden transform  group-hover:scale-105 transition-all duration-500">
-                            <img
-                              src={
-                                item.product_image && item.product_image !== ""
-                                  ? item.product_image
-                                  : "/src/Image/No image.jpg"
-                              }
-                              alt={item.name}
-                              className="w-full h-full object-contain"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <h4 className="font-semibold text-sm sm:text-base text-gray-800 line-clamp-1">
-                        {item.product_name}
-                      </h4>
-
-                      <p className="text-gray-500 text-xs sm:text-sm line-clamp-2 mt-2">
-                        {item.description}
-                      </p>
-
-                      <div className="flex items-center gap-4 mt-3">
-                        <span className="text-lg font-bold text-black">
-                          ₹{item.price}
-                        </span>
-                        {item.cancle_price && (
-                          <span className="text-sm font-bold text-red-500 line-through">
-                            ₹{item.cancle_price}
-                          </span>
-                        )}
-                      </div>
-                      <CommanButton
-                        label="View Product"
-                      />
-                    </div>
-                  ))
-                )}
-              </div>
+              <CommanCardList
+                data={singleProductData?.related_products}
+                loading={loading}
+                isTrue={true}
+              />
             </div>
           )}
         </div>

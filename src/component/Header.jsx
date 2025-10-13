@@ -311,7 +311,8 @@ const Header = () => {
                         {/* whishlist Button (Desktop) */}
                         <CommanButton
                             label={<i className="ri-heart-line text-[#251c4b] text-2xl"></i>}
-                            onClick={handleAddcart}
+                            // onClick={handleAddcart}
+                            onClick={() => navigate('/wishlist')}
                             bgColor="bg-none"
                             shaDow="shadow-none"
                             borDer="border-none"
@@ -547,6 +548,11 @@ const Header = () => {
                             </div>
                         )}
                     </div>
+
+
+
+
+
 
                     {/* Mobile Right Side Icons */}
                     <div className="md:hidden flex items-center gap-3">
